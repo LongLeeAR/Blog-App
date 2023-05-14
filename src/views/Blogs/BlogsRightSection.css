@@ -1,0 +1,25 @@
+.list-item {
+  width: 270px;
+  margin-top: 32px;
+  border-top: solid 1px #eee;
+}
+
+.right-content-list-item {
+  margin-top: 32px;
+  list-style: disc;
+}
+
+li .selected {
+  color: #337ab7
+}
+
+.right-content-list-item > li {
+  margin-bottom: 32px;
+  font-size: 16px;
+}
+
+.right-content-list-item > li:hover {
+  text-decoration: underline;
+  color: #337ab7;
+  text-decoration-style: dotted;
+}
