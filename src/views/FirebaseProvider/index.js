@@ -2,7 +2,6 @@ import { initializeApp } from 'firebase/app';
 import { createContext, useContext, useEffect, useState } from "react";
 
 const firebaseConfig = {
-  // databaseURL: 'https://blog-381109-default-rtdb.asia-southeast1.firebasedatabase.app',
   apiKey: "AIzaSyDFZJT5zwR0TbgPIehbdDnyPshPWt4_Q0s",
   authDomain: "blog-381109.firebaseapp.com",
   databaseURL: "https://blog-381109-default-rtdb.asia-southeast1.firebasedatabase.app",

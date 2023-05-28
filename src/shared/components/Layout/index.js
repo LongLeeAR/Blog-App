@@ -2,9 +2,10 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { OWNER_EMAIL } from 'shared/constants';
+import { useActions } from 'shared/redux/useActions';
 import { useFirebaseContext } from 'views/FirebaseProvider';
-import { useLoadingSpinContext } from '../LoadingSpinner';
-import './Layout.css';
+import { loadingSpinnerActions } from '../LoadingSpinner/LoadingSpinner.slice';
+import './index.css';
 
 const Layout = (props) => {
   const { isEditable = true, title, isBlogDetail, introduction, children, rightContent, imgUrl, isAboutPage } = props;
@@ -13,7 +14,9 @@ const Layout = (props) => {
   const {blogRouteType}  = useParams();
   const navigate = useNavigate();
   const [file, setFile] = useState();
-  const {setLoading} = useLoadingSpinContext();
+  const {toggleLoading} = useActions({
+    toggleLoading: loadingSpinnerActions.toggleLoadingSpinner
+  })
 
   const storage = getStorage(app);
   const cvFileRef = ref(storage, 'files/CV.pdf');
@@ -27,11 +30,12 @@ const Layout = (props) => {
   }
 
   const onCVChange = (event) => {
-    setLoading(true);
+    toggleLoading(true);
     const {target: {files: [file]}} = event;
+    
     uploadBytes(cvFileRef, file).then((snapshot) => {
       setFile(snapshot.metadata);
-      setLoading(false);
+      toggleLoading(false);
       console.log('Uploaded a blob or file! ', snapshot);
     });
   }

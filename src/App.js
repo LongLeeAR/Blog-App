@@ -1,16 +1,17 @@
 import { useEffect } from "react";
+import { Provider } from 'react-redux';
 import {
   Navigate, Route, Routes,
   useLocation
 } from "react-router-dom";
 import { LoadingSpinner } from "shared/components/LoadingSpinner";
+import store from 'shared/redux/store';
 import { About } from "views/About";
-import BlogDetail from "views/Blogs/BlogDetail";
-import BlogEditor from 'views/Blogs/BlogEditor/BlogEditor';
-import Blogs from 'views/Blogs/Blogs';
+import Blogs from 'views/Blogs';
+import BlogEditor from 'views/Blogs/BlogEditor';
 import { FirebaseProvider } from "views/FirebaseProvider";
 import Photos from 'views/Photos/Photos';
-import TopNavBar from 'views/TopNavBar/TopNavBar';
+import TopNavBar from 'views/TopNavBar';
 import './App.css';
 
 function App() {
@@ -23,26 +24,27 @@ function App() {
  
   return (
     <div className="App">
-      <LoadingSpinner>
-        <FirebaseProvider>
-          <TopNavBar />
-          <Routes>
-            <Route path="/" element={<Navigate to="tap-but" />} />
-            <Route path="tap-but" element={<Blogs/>} >
-              <Route index path=":blogRouteType/:blogId?" element={<Blogs/>} />
-            </Route>
-            {/* <Route path="bai-viet/:blogId" element={<BlogDetail />} /> */}
-            <Route path="photos" element={<Photos />} />
-            <Route path="chinh-sua" element={<BlogEditor />} >
-              <Route path=":blogId" element={<BlogEditor />} />
-            </Route>
-            <Route path="tao-moi" element={<BlogEditor />} >
-              <Route path=":blogType" element={<BlogEditor />} />
-            </Route>
-            <Route path="gioi-thieu" element={<About />} />
-          </Routes>
-        </FirebaseProvider>
-      </LoadingSpinner>
+      <Provider store={store}>
+        <LoadingSpinner>
+          <FirebaseProvider>
+            <TopNavBar />
+            <Routes>
+              <Route path="/" element={<Navigate to="tap-but" />} />
+              <Route path="tap-but" element={<Blogs/>} >
+                <Route index path=":blogRouteType/:blogId?" element={<Blogs/>} />
+              </Route>
+              <Route path="photos" element={<Photos />} />
+              <Route path="chinh-sua" element={<BlogEditor />} >
+                <Route path=":blogId" element={<BlogEditor />} />
+              </Route>
+              <Route path="tao-moi" element={<BlogEditor />} >
+                <Route path=":blogType" element={<BlogEditor />} />
+              </Route>
+              <Route path="gioi-thieu" element={<About />} />
+            </Routes>
+          </FirebaseProvider>
+        </LoadingSpinner>
+      </Provider>
     </div>
   );
 }

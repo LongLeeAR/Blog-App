@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import './Modal.css';
+import './index.css';
 
 const ModalContent = (props) => {
   const {title, subTitle, onSubmit, onCancel} = props;

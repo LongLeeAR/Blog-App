@@ -1,62 +1,48 @@
-import { getDatabase, onValue, ref } from "firebase/database";
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { createReactEditorJS } from "react-editor-js";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "shared/components";
-import { useLoadingSpinContext } from "shared/components/LoadingSpinner";
-import { BLOG_TYPE_NAME_MAP } from "shared/constants";
-import { separateTheBlogHeader } from "shared/utils/removeBlogHeader";
+import { BLOG_TYPE_NAME_MAP, EDITOR_JS_TOOLS } from "shared/constants";
+import { separateTheBlogHeader } from 'shared/utils/removeBlogHeader';
 import { useFirebaseContext } from "views/FirebaseProvider";
-import { EDITOR_JS_TOOLS } from "../BlogEditor/constants";
+import { selectBlogById } from '../Blogs.selectors';
 import BlogsRightSection from "../BlogsRightSection";
 
 const ReactEditorJS = createReactEditorJS();
 
 const BlogDetail = () => {
   const {blogId} = useParams();
-  const db = getDatabase();
-  const [selectedBlog, setSelectedBlog] = useState();
   const {user} = useFirebaseContext();
   const navigate = useNavigate();
   const editorRef = useRef();
-  const {setLoading} = useLoadingSpinContext();
+  // const {fetchBlogDetail} = useActions({
+  //   fetchBlogDetail: blogDetailActions.fetchBlogDetail,
+  // })
+  const blogDetail = useSelector(state => selectBlogById(state, blogId));
 
-  useEffect(() => {
-    if (blogId) {
-      const blogRef = ref(db, `/blogs/tap-but/${blogId}`);
-      onValue(blogRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const selected = separateTheBlogHeader(data);
-          console.log('selected: ', selected);
-          setSelectedBlog(selected);
-          // editorRef?.current?.render(selected.blog);
-        }
-        // console.log('hide the loading');
-        // setLoading(false)
-      });
-    }
-  }, [])
+  const formattedData = separateTheBlogHeader(blogDetail);
 
+  // useEffect(() => {
+  //   // if (blogId) {
+  //   fetchBlogDetail(blogId);
+  //   // }
+  // }, [])
 
   const onInitEditor = (editorCore) => {
-    setLoading(true);
-    console.log('show loading on blog detail');
     editorRef.current = editorCore;
   }
 
   const onEditorReady = () => {
-    if (blogId) {
-      selectedBlog && editorRef?.current?.render(selectedBlog.blog);
-    console.log('hide loading on blog detail');
-
-      setLoading(false)
+    if (formattedData?.blog) {
+      editorRef?.current?.render(formattedData.blog);
     }
   }
 
   const editBlog = (id) => {
     navigate(`/chinh-sua/${id}`);
   }
+
   return (
     <Layout
       isBlogDetail
@@ -65,31 +51,25 @@ const BlogDetail = () => {
       {
         <section style={{marginTop: 16}}>
           {
-            Boolean(blogId) && selectedBlog?.blog &&
+            formattedData?.blog &&
             <>
-              <h2>{selectedBlog.headerBlock?.data?.text}</h2>
+              <h2>{formattedData.headerBlock?.data?.text}</h2>
               <section className='sub-title'>
-                <span className='blog-type'>{BLOG_TYPE_NAME_MAP[selectedBlog.blog.type]}</span>
-                <span>{new Date(selectedBlog.blog.time).toLocaleDateString()}</span>
+                <span className='blog-type'>{BLOG_TYPE_NAME_MAP[formattedData.blog.type]}</span>
+                <span>{new Date(formattedData.blog.time).toLocaleDateString()}</span>
                 {
-                  Boolean(user) && <i className="fa fa-pencil" style={{marginLeft: 8, cursor: 'pointer'}} onClick={() => {editBlog(selectedBlog.blog.id)}}></i>
+                  Boolean(user) && <i className="fa fa-pencil" style={{marginLeft: 8, cursor: 'pointer'}} onClick={() => {editBlog(formattedData.blog.id)}}></i>
                 }
               </section>
               <ReactEditorJS
                 readOnly
-                // key={blogId}
                 onInitialize={onInitEditor}
                 tools={EDITOR_JS_TOOLS}
                 onReady={onEditorReady}
                 holder="blog-reader"
-                // value={selectedBlog.blog}
               />
             </>
           }
-          {/* {
-            Boolean(blogId) &&
-            
-          } */}
         </section>
       }
     </Layout>

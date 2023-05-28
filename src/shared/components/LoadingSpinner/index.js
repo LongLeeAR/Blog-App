@@ -1,19 +1,21 @@
-import { createContext, useContext, useState } from "react"
-import './index.css'
+import { createContext, useContext } from "react";
+import { useSelector } from "react-redux";
+import './index.css';
+import { selectLoadingSpinnerState } from "./LoadingSpinner.selectors";
 
 const LoadingContext = createContext(null);
 
 export const useLoadingSpinContext = () => useContext(LoadingContext);
 
 export const LoadingSpinner = ({children}) => {
-  const [isLoading, setLoading] = useState();
+  const {shouldDisplay} = useSelector(selectLoadingSpinnerState);
 
-  return <LoadingContext.Provider value={{isLoading, setLoading}}>
+  return <>
     {
-      isLoading && <div className="overlay">
+      shouldDisplay && <div className="overlay">
         <div className="spinner"></div>
       </div>
     }
     {children}
-  </LoadingContext.Provider>
+  </>
 }
