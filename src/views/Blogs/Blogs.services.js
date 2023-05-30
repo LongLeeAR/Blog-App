@@ -1,4 +1,4 @@
-import { get, ref, set } from "firebase/database";
+import { child, get, ref, set } from "firebase/database";
 import { getDownloadURL, getStorage, ref as storageRef, uploadString } from 'firebase/storage';
 import { callWithFirebaseDB } from "shared/api";
 import { BlogsRef } from "shared/constants";
@@ -60,6 +60,17 @@ export const saveBlogService =  async (blog, app) => {
       return blog;
     } catch (error) {
       return error;
+    }
+  })
+}
+
+export const fetchBlogDetailService = async (blogId) => {
+  return callWithFirebaseDB(async (database) => {
+    const dbRef = ref(database);
+    const snapshot = await get(child(dbRef, `${BlogsRef}/${blogId}`));
+    const data = snapshot.val();
+    if (data) {
+      return data;
     }
   })
 }

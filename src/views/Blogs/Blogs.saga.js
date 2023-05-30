@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { loadingSpinnerActions } from "shared/components/LoadingSpinner/LoadingSpinner.slice";
 
-import { fetchBlogListService, saveBlogService } from "./Blogs.services";
+import { fetchBlogDetailService, fetchBlogListService, saveBlogService } from "./Blogs.services";
 import { blogsActions } from "./Blogs.slice";
 
 export function* fetchBlogList () {
@@ -32,5 +32,22 @@ export function* saveBlog({payload}) {
 
 export function* watchSaveBlog () {
   yield takeLatest(blogsActions.saveBlog.type, saveBlog);
+}
+
+
+export function* fetchBlogDetail(action) {
+  yield put(loadingSpinnerActions.toggleLoadingSpinner(true));
+  const response = yield fetchBlogDetailService(action.payload);
+
+  if (response) {
+    yield put(blogsActions.fetchBlogDetailSuccess(response))
+  } else {
+    yield put(blogsActions.fetchBlogDetailFailure());
+  }
+  yield put(loadingSpinnerActions.toggleLoadingSpinner(false));
+}
+
+export function* watchFetchBlogDetail () {
+  yield takeLatest(blogsActions.fetchBlogDetail.type, fetchBlogDetail);
 }
 

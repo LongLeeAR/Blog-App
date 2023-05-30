@@ -1,12 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createReactEditorJS } from "react-editor-js";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "shared/components";
 import { BLOG_TYPE_NAME_MAP, EDITOR_JS_TOOLS } from "shared/constants";
+import { useActions } from 'shared/redux/useActions';
 import { separateTheBlogHeader } from 'shared/utils/removeBlogHeader';
 import { useFirebaseContext } from "views/FirebaseProvider";
 import { selectBlogById } from '../Blogs.selectors';
+import { blogsActions } from '../Blogs.slice';
 import BlogsRightSection from "../BlogsRightSection";
 
 const ReactEditorJS = createReactEditorJS();
@@ -16,18 +18,19 @@ const BlogDetail = () => {
   const {user} = useFirebaseContext();
   const navigate = useNavigate();
   const editorRef = useRef();
-  // const {fetchBlogDetail} = useActions({
-  //   fetchBlogDetail: blogDetailActions.fetchBlogDetail,
-  // })
+  const {fetchBlogDetail} = useActions({
+    fetchBlogDetail: blogsActions.fetchBlogDetail,
+  })
+  
   const blogDetail = useSelector(state => selectBlogById(state, blogId));
 
   const formattedData = separateTheBlogHeader(blogDetail);
 
-  // useEffect(() => {
-  //   // if (blogId) {
-  //   fetchBlogDetail(blogId);
-  //   // }
-  // }, [])
+  useEffect(() => {
+    if (!blogDetail) {
+      fetchBlogDetail(blogId);
+    }
+  }, [blogDetail])
 
   const onInitEditor = (editorCore) => {
     editorRef.current = editorCore;

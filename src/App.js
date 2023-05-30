@@ -5,6 +5,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { LoadingSpinner } from "shared/components/LoadingSpinner";
+import ToastProvider from 'shared/components/Toast';
 import store from 'shared/redux/store';
 import { About } from "views/About";
 import Blogs from 'views/Blogs';
@@ -26,23 +27,25 @@ function App() {
     <div className="App">
       <Provider store={store}>
         <LoadingSpinner>
-          <FirebaseProvider>
-            <TopNavBar />
-            <Routes>
-              <Route path="/" element={<Navigate to="tap-but" />} />
-              <Route path="tap-but" element={<Blogs/>} >
-                <Route index path=":blogRouteType/:blogId?" element={<Blogs/>} />
-              </Route>
-              <Route path="photos" element={<Photos />} />
-              <Route path="chinh-sua" element={<BlogEditor />} >
-                <Route path=":blogId" element={<BlogEditor />} />
-              </Route>
-              <Route path="tao-moi" element={<BlogEditor />} >
-                <Route path=":blogType" element={<BlogEditor />} />
-              </Route>
-              <Route path="gioi-thieu" element={<About />} />
-            </Routes>
-          </FirebaseProvider>
+          <ToastProvider>
+            <FirebaseProvider>
+              <TopNavBar />
+              <Routes>
+                <Route path="/" element={<Navigate to="tap-but" />} />
+                <Route path="tap-but" element={<Blogs/>} >
+                  <Route index path=":blogRouteType/:blogId?" element={<Blogs/>} />
+                </Route>
+                <Route path="photos" element={<Photos />} />
+                <Route path="chinh-sua" element={<BlogEditor />} >
+                  <Route path=":blogId" element={<BlogEditor />} />
+                </Route>
+                <Route path="tao-moi" element={<BlogEditor />} >
+                  <Route path=":blogType" element={<BlogEditor />} />
+                </Route>
+                <Route path="gioi-thieu" element={<About />} />
+              </Routes>
+            </FirebaseProvider>
+          </ToastProvider>
         </LoadingSpinner>
       </Provider>
     </div>

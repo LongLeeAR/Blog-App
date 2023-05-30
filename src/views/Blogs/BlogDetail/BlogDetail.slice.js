@@ -15,15 +15,6 @@ const blogDetailSlice = createSlice({
     fetchBlogDetailSuccess: (state, {payload}) => {
       state.data = payload;
     },
-    saveBlog: (state) => {
-      state.isSaveBlogSuccess = false;
-    },
-    saveBlogSuccess: (state) => {
-      state.isSaveBlogSuccess = true
-    },
-    resetBlogData: (state) => {
-      state.data = null;
-    }
   }
 })
 

@@ -36,7 +36,6 @@ const Layout = (props) => {
     uploadBytes(cvFileRef, file).then((snapshot) => {
       setFile(snapshot.metadata);
       toggleLoading(false);
-      console.log('Uploaded a blob or file! ', snapshot);
     });
   }
 
@@ -45,6 +44,14 @@ const Layout = (props) => {
     getDownloadURL(cvFileRef).then(url => {
       window.open(url, '_blank')
     })
+  }
+
+  const onSearching = () => {
+    // showToast({
+    //   type: 'success',
+    //   message: 'Search something very longgg like thiss!!',
+    //   duration: 5000
+    // })
   }
   
 
@@ -128,7 +135,7 @@ const Layout = (props) => {
           <a className='social-item' title='Facebook'><i className="fa fa-twitter"/></a>
         </section>
         <section className='search'>
-          <input  className='search-input' type="search" placeholder='Tìm kiếm' />
+          <input onClick={onSearching} className='search-input' type="search" placeholder='Tìm kiếm' />
           <button className='search-icon'><i className='fa fa-search'></i></button>
         </section>
         {rightContent && rightContent}

@@ -2,6 +2,11 @@ import { createSelector } from "@reduxjs/toolkit";
 
 export const selectBlogs = (state) => state.blogs
 
+export const selectIsFetchingBlogDetail = createSelector(
+  selectBlogs,
+  (blogsState) => blogsState.isFetchingBlogDetail || false
+)
+
 export const selectIsSaveBlogSuccess = createSelector(
   selectBlogs,
   (blogsState) => blogsState.isSaveBlogSuccess || false

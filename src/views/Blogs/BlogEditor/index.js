@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createReactEditorJS } from 'react-editor-js';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { useToast } from 'shared/components/Toast';
 import { BLOG_TYPE, BLOG_TYPE_NAME_MAP, OWNER_EMAIL } from 'shared/constants';
 
 import { EDITOR_JS_TOOLS } from 'shared/constants';
 import { useActions } from 'shared/redux/useActions';
 import { v4 as uuid } from 'uuid';
 import { useFirebaseContext } from 'views/FirebaseProvider';
-import { selectBlogById, selectIsSaveBlogSuccess } from '../Blogs.selectors';
+import { selectBlogById, selectIsFetchingBlogDetail, selectIsSaveBlogSuccess } from '../Blogs.selectors';
 import { blogsActions } from '../Blogs.slice';
 import './index.css';
 
@@ -22,10 +23,14 @@ const BlogEditor = (props) => {
   const editorRef = useRef();
   const blogDetail = useSelector(state => selectBlogById(state, blogId));
   const isSaveBlogSuccess = useSelector(selectIsSaveBlogSuccess);
+  const isFetchingBlogDetail = useSelector(selectIsFetchingBlogDetail);
   const [selectedBlogType, setSelectedBlogType] = useState(blogType || BLOG_TYPE.Chronicle);
+  const showToast = useToast();
  
-  const {saveBlog} = useActions({
+  const {saveBlog, resetFlag, fetchBlogDetail} = useActions({
+    fetchBlogDetail: blogsActions.fetchBlogDetail,
     saveBlog: blogsActions.saveBlog,
+    resetFlag: blogsActions.resetFlag,
   })
 
   const onInitEditor = (editorCore) => {
@@ -33,7 +38,18 @@ const BlogEditor = (props) => {
   }
 
   useEffect(() => {
+    if (blogId && !blogDetail) {
+      fetchBlogDetail(blogId);
+    }
+  }, [blogDetail])
+
+  useEffect(() => {
     if (isSaveBlogSuccess) {
+      showToast({
+        type: 'success',
+        message: 'Save blog successfully!'
+      });
+      resetFlag();
       navigate(-1)
     }
   }, [isSaveBlogSuccess])
@@ -70,6 +86,7 @@ const BlogEditor = (props) => {
   }
 
   const goBack = () => {
+    resetFlag();
     navigate(-1);
   }
 
@@ -105,28 +122,31 @@ const BlogEditor = (props) => {
           <button onClick={handleSaveBlog} className='primary'>Save</button>
         </section>
       </section>
-      <ReactEditorJS
-        tools={EDITOR_JS_TOOLS}
-        inlineToolbar
-        onInitialize={onInitEditor}
-        holder="blog-editor"
-        placeholder="Viết gì đó đi!"
-        minHeight={500}
-        width={"90%"}
-        onReady={onReady}
-        defaultValue={{
-          blocks: [
-            {
-              id: "default-header",
-              type: "header",
-              data: {
-                text: "Tiêu đề",
-                level: 1,
+      {
+        !isFetchingBlogDetail && 
+        <ReactEditorJS
+          tools={EDITOR_JS_TOOLS}
+          inlineToolbar
+          onInitialize={onInitEditor}
+          holder="blog-editor"
+          placeholder="Viết gì đó đi!"
+          minHeight={500}
+          width={"90%"}
+          onReady={onReady}
+          defaultValue={{
+            blocks: [
+              {
+                id: "default-header",
+                type: "header",
+                data: {
+                  text: "Tiêu đề",
+                  level: 1,
+                }
               }
-            }
-          ]
-        }}
-      />
+            ]
+          }}
+        />
+      }
     </section>
   </>)
 }

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   data: null,
+  isFetchingBlogDetail: false,
   isSaveBlogSuccess: false,
 }
 
@@ -28,6 +29,26 @@ const blogsSlice = createSlice({
       }
       state.isSaveBlogSuccess = true
     },
+    fetchBlogDetail: (state) => {
+      state.isFetchingBlogDetail = true
+    },
+    fetchBlogDetailSuccess: (state, {payload}) => {
+      if (state.data) {
+        state.data[payload.id] = payload;
+      } else {
+        state.data = {
+          [payload.id]: payload
+        }
+      }
+      state.isFetchingBlogDetail = false;
+    },
+    fetchBlogDetailFailure: (state) => {
+      state.isFetchingBlogDetail = false;
+    },
+    resetFlag: (state) => {
+      state.isFetchingBlogDetail = false;
+      state.isSaveBlogSuccess = false;
+    }
   }
 })
 

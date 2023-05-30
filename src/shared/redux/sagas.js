@@ -1,6 +1,5 @@
 import { all, fork } from "redux-saga/effects";
-import { watchFetchBlogDetail } from "views/Blogs/BlogDetail/BlogDetail.saga";
-import { watchFetchBlogList, watchSaveBlog } from "views/Blogs/Blogs.saga";
+import { watchFetchBlogDetail, watchFetchBlogList, watchSaveBlog } from "views/Blogs/Blogs.saga";
 
 export default function* rootSaga () {
   yield all([

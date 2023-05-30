@@ -13,7 +13,7 @@ import BlogsRightSection from './BlogsRightSection';
 
 
 export const BlogList = () => {
-  const {blogRouteType, blogId}  = useParams();
+  const {blogRouteType}  = useParams();
   const navigate = useNavigate();
   const {user} = useFirebaseContext();
   const {data: blogsById} = useSelector(selectBlogs);
@@ -31,9 +31,7 @@ export const BlogList = () => {
   })
 
   useEffect(() => {
-    if (!blogsById) {
-      fetchBlogs();
-    }
+    fetchBlogs();
   }, [])
   
   const blogsFiltered = useMemo(() => {
