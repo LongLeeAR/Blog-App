@@ -3,9 +3,7 @@ import { createReactEditorJS } from 'react-editor-js';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from 'shared/components/Toast';
-import { BLOG_TYPE, BLOG_TYPE_NAME_MAP, OWNER_EMAIL } from 'shared/constants';
-
-import { EDITOR_JS_TOOLS } from 'shared/constants';
+import { BLOG_TYPE, BLOG_TYPE_NAME_MAP, EDITOR_JS_TOOLS, OWNER_EMAIL } from 'shared/constants';
 import { useActions } from 'shared/redux/useActions';
 import { v4 as uuid } from 'uuid';
 import { useFirebaseConfig } from 'views/FirebaseProvider';
@@ -38,6 +36,17 @@ const BlogEditor = (props) => {
   const onInitEditor = (editorCore) => {
     editorRef.current = editorCore;
   }
+
+  useEffect(() => {
+    const prompt = (event) => {
+      event.returnValue = 'whatever'
+    }
+    window.addEventListener('beforeunload', prompt);
+
+    return () => {
+      window.removeEventListener('beforeunload', prompt);
+    }
+  })
 
   useEffect(() => {
     if (blogId && !blogDetail) {

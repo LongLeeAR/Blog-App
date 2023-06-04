@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "blog-381109"
-  }
+    "default": "long-hai-le",
+    "long-hai-le": "long-hai-le"
+  },
+  "targets": {},
+  "etags": {}
 }

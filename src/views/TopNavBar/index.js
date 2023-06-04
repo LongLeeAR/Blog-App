@@ -29,7 +29,6 @@ const MenuWrapper = styled.div`
 `
 
 const TopNavBar = () => {
-
   const navigate = useNavigate();
   const login = useLogin();
   const {logout, setLoginInfo} = useActions({
