@@ -1,15 +1,18 @@
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { useState } from "react";
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
 import { OWNER_EMAIL } from 'shared/constants';
 import { useActions } from 'shared/redux/useActions';
-import { useFirebaseContext } from 'views/FirebaseProvider';
+import { useFirebaseConfig } from 'views/FirebaseProvider';
+import { selectUser } from 'views/Login/Auth.selectors';
 import { loadingSpinnerActions } from '../LoadingSpinner/LoadingSpinner.slice';
 import './index.css';
 
 const Layout = (props) => {
   const { isEditable = true, title, isBlogDetail, introduction, children, rightContent, imgUrl, isAboutPage } = props;
-  const {user, app} = useFirebaseContext();
+  const {app} = useFirebaseConfig();
+  const user = useSelector(selectUser);
   const isOwner = user?.email === OWNER_EMAIL;
   const {blogRouteType}  = useParams();
   const navigate = useNavigate();

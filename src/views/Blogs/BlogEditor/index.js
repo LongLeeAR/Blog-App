@@ -8,7 +8,8 @@ import { BLOG_TYPE, BLOG_TYPE_NAME_MAP, OWNER_EMAIL } from 'shared/constants';
 import { EDITOR_JS_TOOLS } from 'shared/constants';
 import { useActions } from 'shared/redux/useActions';
 import { v4 as uuid } from 'uuid';
-import { useFirebaseContext } from 'views/FirebaseProvider';
+import { useFirebaseConfig } from 'views/FirebaseProvider';
+import { selectUser } from 'views/Login/Auth.selectors';
 import { selectBlogById, selectIsFetchingBlogDetail, selectIsSaveBlogSuccess } from '../Blogs.selectors';
 import { blogsActions } from '../Blogs.slice';
 import './index.css';
@@ -19,13 +20,14 @@ const ReactEditorJS = createReactEditorJS();
 const BlogEditor = (props) => {
   const {blogId, blogType} = useParams();
   const navigate = useNavigate();
-  const {user, app} = useFirebaseContext();
+  const {app} = useFirebaseConfig();
+  const user = useSelector(selectUser);
   const editorRef = useRef();
   const blogDetail = useSelector(state => selectBlogById(state, blogId));
   const isSaveBlogSuccess = useSelector(selectIsSaveBlogSuccess);
   const isFetchingBlogDetail = useSelector(selectIsFetchingBlogDetail);
   const [selectedBlogType, setSelectedBlogType] = useState(blogType || BLOG_TYPE.Chronicle);
-  const showToast = useToast();
+  const {showToast} = useToast();
  
   const {saveBlog, resetFlag, fetchBlogDetail} = useActions({
     fetchBlogDetail: blogsActions.fetchBlogDetail,
@@ -47,7 +49,7 @@ const BlogEditor = (props) => {
     if (isSaveBlogSuccess) {
       showToast({
         type: 'success',
-        message: 'Save blog successfully!'
+        message: 'Save success!'
       });
       resetFlag();
       navigate(-1)

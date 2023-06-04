@@ -1,8 +1,12 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { BLOG_TYPE, BLOG_TYPE_NAME_MAP } from "shared/constants";
+import { useLogin } from "shared/hooks/useLogin";
+import { useActions } from "shared/redux/useActions";
 import styled from "styled-components";
-import { useFirebaseContext } from "views/FirebaseProvider";
+import { selectUser } from 'views/Login/Auth.selectors';
+import { authActions } from "views/Login/Auth.slice";
 import './index.css';
 
 const StickyHeader = styled.div`
@@ -25,53 +29,22 @@ const MenuWrapper = styled.div`
 `
 
 const TopNavBar = () => {
-  const {user, setUser, setToken} = useFirebaseContext();
+
   const navigate = useNavigate();
+  const login = useLogin();
+  const {logout, setLoginInfo} = useActions({
+    logout: authActions.logout,
+    setLoginInfo: authActions.setLoginInfo
+  })
 
-  const openLoginPopup = () => {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      setToken(token);
-      // The signed-in user info.
-      const {displayName, email} = result.user;
-      // console.log('user: ', user);
-      setUser({displayName, email});
-      localStorage.setItem('user', JSON.stringify({
-        displayName,
-        email
-      }));
-      localStorage.setItem('token', token);
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-    });
-  }
+  const user = useSelector(selectUser);
 
-  const handleLogout = () => {
-    const auth = getAuth();
-    signOut(auth).then(() => {
-      // Sign-out successful.
-      setToken(null);
-      setUser(null);
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-    }).catch((error) => {
-      // An error happened.
-    });
-  }
+  useEffect(() => {
+    const loginInfo = localStorage.getItem('user');
+    if (loginInfo && loginInfo !== '{}') {
+      setLoginInfo(loginInfo);
+    }
+  }, [])
 
   return (
     <StickyHeader>
@@ -116,21 +89,22 @@ const TopNavBar = () => {
           </li>
         </ul>
       </MenuWrapper>
-      <section style={{alignSelf: 'center', cursor: 'pointer', width: 150}}>
+      <section style={{alignSelf: 'center', marginRight: 16, cursor: 'pointer', minWidth: 170, display: 'flex', justifyContent: 'flex-end'}}>
         {
            Boolean(user) ?  <ul className="menu">
             <li className="menuItem dropdown-item">
               <h4 >{user?.displayName}</h4>
+              <img src={user?.photoURL} width="24px" height="24px" style={{borderRadius: '50%', marginLeft: 8}} />
               <ul
                 role="menu"
                 style={{width: 100}}
                 className="dropdown-menu"
               >
-                <li onClick={handleLogout} className="link">Logout</li>
+                <li onClick={logout} className="link">Logout</li>
               </ul>
             </li>
            </ul> 
-           : <section style={{alignSelf: 'center', cursor: 'pointer'}} onClick={openLoginPopup}>Login</section>
+           : <section style={{cursor: 'pointer', display: 'flex', justifyContent: 'flex-end'}} onClick={login}>Login</section>
         }
       </section>
     </StickyHeader>

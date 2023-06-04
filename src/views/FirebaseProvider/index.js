@@ -1,38 +1,27 @@
 import { initializeApp } from 'firebase/app';
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDFZJT5zwR0TbgPIehbdDnyPshPWt4_Q0s",
-  authDomain: "blog-381109.firebaseapp.com",
-  databaseURL: "https://blog-381109-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "blog-381109",
-  storageBucket: "blog-381109.appspot.com",
-  messagingSenderId: "568926773323",
-  appId: "1:568926773323:web:fa54b98869660aa4f82dce"
+
+// Load firebase config from the environment
+export const firebaseConfig = {
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
 };
 
 const firebaseContext = createContext(null);
 
-export const useFirebaseContext = () => useContext(firebaseContext);
+export const useFirebaseConfig = () => useContext(firebaseContext);
 
 export const FirebaseProvider = ({children}) => {
   const app = initializeApp(firebaseConfig);
-  const [user, setUser] = useState();
-  const [token, setToken] = useState();
-
-  useEffect(() => {
-    const userFromLocal = localStorage.getItem('user');
-    if (userFromLocal) {
-      setUser(JSON.parse(userFromLocal));
-    }
-  }, [])
 
   const firebaseContextValue = {
-    user,
     app,
-    token,
-    setUser,
-    setToken
   }
 
   return <firebaseContext.Provider value={firebaseContextValue}>

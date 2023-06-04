@@ -5,7 +5,7 @@ import { Layout } from 'shared/components';
 import { BLOGS_INTRODUCTION, BLOG_TYPE, BLOG_TYPE_NAME_MAP, DEFAULT_BLOG_TITLE, INTRODUCTION_BLOG_TYPE_MAP } from 'shared/constants';
 import { useActions } from 'shared/redux/useActions';
 import { formatText } from 'shared/utils/formatText';
-import { useFirebaseContext } from 'views/FirebaseProvider';
+import { selectUser } from 'views/Login/Auth.selectors';
 import './Blogs.css';
 import { selectBlogs } from './Blogs.selectors';
 import { blogsActions } from './Blogs.slice';
@@ -15,8 +15,8 @@ import BlogsRightSection from './BlogsRightSection';
 export const BlogList = () => {
   const {blogRouteType}  = useParams();
   const navigate = useNavigate();
-  const {user} = useFirebaseContext();
   const {data: blogsById} = useSelector(selectBlogs);
+  const user = useSelector(selectUser);
 
   const blogs = useMemo(() => {
     if (!blogsById) {

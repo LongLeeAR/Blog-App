@@ -21,7 +21,7 @@ export function* watchFetchBlogList () {
 
 export function* saveBlog({payload}) {
   yield put(loadingSpinnerActions.toggleLoadingSpinner(true));
-  const response = yield saveBlogService(payload.blog, payload.app);
+  const response = yield call(saveBlogService, payload.blog, payload.app);
 
   if (response) {
     yield put(blogsActions.saveBlogSuccess(response))
@@ -37,7 +37,7 @@ export function* watchSaveBlog () {
 
 export function* fetchBlogDetail(action) {
   yield put(loadingSpinnerActions.toggleLoadingSpinner(true));
-  const response = yield fetchBlogDetailService(action.payload);
+  const response = yield call(fetchBlogDetailService, action.payload);
 
   if (response) {
     yield put(blogsActions.fetchBlogDetailSuccess(response))

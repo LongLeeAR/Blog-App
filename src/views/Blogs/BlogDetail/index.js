@@ -6,7 +6,7 @@ import { Layout } from "shared/components";
 import { BLOG_TYPE_NAME_MAP, EDITOR_JS_TOOLS } from "shared/constants";
 import { useActions } from 'shared/redux/useActions';
 import { separateTheBlogHeader } from 'shared/utils/removeBlogHeader';
-import { useFirebaseContext } from "views/FirebaseProvider";
+import { selectUser } from 'views/Login/Auth.selectors';
 import { selectBlogById } from '../Blogs.selectors';
 import { blogsActions } from '../Blogs.slice';
 import BlogsRightSection from "../BlogsRightSection";
@@ -15,9 +15,9 @@ const ReactEditorJS = createReactEditorJS();
 
 const BlogDetail = () => {
   const {blogId} = useParams();
-  const {user} = useFirebaseContext();
   const navigate = useNavigate();
   const editorRef = useRef();
+  const user = useSelector(selectUser);
   const {fetchBlogDetail} = useActions({
     fetchBlogDetail: blogsActions.fetchBlogDetail,
   })
