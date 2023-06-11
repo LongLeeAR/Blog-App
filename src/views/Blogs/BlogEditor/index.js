@@ -8,7 +8,7 @@ import { useActions } from 'shared/redux/useActions';
 import { v4 as uuid } from 'uuid';
 import { useFirebaseConfig } from 'views/FirebaseProvider';
 import { selectUser } from 'views/Login/Auth.selectors';
-import { selectBlogById, selectIsFetchingBlogDetail, selectIsSaveBlogSuccess } from '../Blogs.selectors';
+import { selectBlogById, selectIsFetchingBlogDetail, selectSavingBlogStatus } from '../Blogs.selectors';
 import { blogsActions } from '../Blogs.slice';
 import './index.css';
 
@@ -22,7 +22,7 @@ const BlogEditor = (props) => {
   const user = useSelector(selectUser);
   const editorRef = useRef();
   const blogDetail = useSelector(state => selectBlogById(state, blogId));
-  const isSaveBlogSuccess = useSelector(selectIsSaveBlogSuccess);
+  const blogSavingStatus = useSelector(selectSavingBlogStatus);
   const isFetchingBlogDetail = useSelector(selectIsFetchingBlogDetail);
   const [selectedBlogType, setSelectedBlogType] = useState(blogType || BLOG_TYPE.Chronicle);
   const {showToast} = useToast();
@@ -55,15 +55,22 @@ const BlogEditor = (props) => {
   }, [blogDetail])
 
   useEffect(() => {
-    if (isSaveBlogSuccess) {
+    if (blogSavingStatus === 'success') {
       showToast({
         type: 'success',
         message: 'Save success!'
       });
       resetFlag();
       navigate(-1)
+    } else {
+      if (blogSavingStatus === 'failure') {
+        showToast({
+          type: 'error',
+          message: 'Failed to save, try again!'
+        });
+      }
     }
-  }, [isSaveBlogSuccess])
+  }, [blogSavingStatus])
 
   const onReady = () => {
     if (editorRef?.current && blogDetail) {

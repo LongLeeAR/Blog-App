@@ -22,9 +22,10 @@ export function* watchFetchBlogList () {
 export function* saveBlog({payload}) {
   yield put(loadingSpinnerActions.toggleLoadingSpinner(true));
   const response = yield call(saveBlogService, payload.blog, payload.app);
-
   if (response) {
     yield put(blogsActions.saveBlogSuccess(response))
+  } else {
+    yield put(blogsActions.saveBlogFailure());
   }
   
   yield put(loadingSpinnerActions.toggleLoadingSpinner(false));

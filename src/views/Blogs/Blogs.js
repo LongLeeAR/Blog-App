@@ -15,16 +15,8 @@ import BlogsRightSection from './BlogsRightSection';
 export const BlogList = () => {
   const {blogRouteType}  = useParams();
   const navigate = useNavigate();
-  const {data: blogsById} = useSelector(selectBlogs);
+  const blogs = useSelector(selectBlogs);
   const user = useSelector(selectUser);
-
-  const blogs = useMemo(() => {
-    if (!blogsById) {
-      return [];
-    }
-    
-    return Object.values(blogsById).sort((a, b) => b.time - a.time);
-  }, [blogsById])
 
   const {fetchBlogs} = useActions({
     fetchBlogs: blogsActions.fetchBlogs
@@ -71,7 +63,7 @@ export const BlogList = () => {
     >
       <section className='blogs'>
         {
-          blogsFiltered?.length > 0 && blogsFiltered.map(({id, time, type, blocks}) => {
+          blogsFiltered?.length > 0 && blogsFiltered.map(({id, time, type, blocks = []}) => {
             const title = blocks[0]?.data?.text;
             const firstImageBlock = blocks.find(block => block.type === 'simpleImage');
             const firstParagraphBlock = blocks.find(block => block.type === 'paragraph');

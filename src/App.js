@@ -21,7 +21,7 @@ function App() {
   // Watch the url changes then scroll to the top of the page
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [location])
+  }, [location.pathname])
  
   return (
     <div className="App">

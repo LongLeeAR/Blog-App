@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+
+export const initialState = {
   data: null,
   isFetchingBlogDetail: false,
-  isSaveBlogSuccess: false,
+  blogSavingStatus: 'not-yet',
 }
 
 const blogsSlice = createSlice({
@@ -17,7 +18,7 @@ const blogsSlice = createSlice({
       state.data = payload
     },
     saveBlog: (state) => {
-      state.isSaveBlogSuccess = false;
+      state.blogSavingStatus = 'pending';
     },
     saveBlogSuccess: (state, {payload}) => {
       if (state.data) {
@@ -27,7 +28,10 @@ const blogsSlice = createSlice({
           [payload.id]: payload
         }
       }
-      state.isSaveBlogSuccess = true
+      state.blogSavingStatus = 'success'
+    },
+    saveBlogFailure: (state) => {
+      state.blogSavingStatus = 'failure'
     },
     fetchBlogDetail: (state) => {
       state.isFetchingBlogDetail = true
@@ -47,7 +51,7 @@ const blogsSlice = createSlice({
     },
     resetFlag: (state) => {
       state.isFetchingBlogDetail = false;
-      state.isSaveBlogSuccess = false;
+      state.blogSavingStatus = 'not-yet';
     }
   }
 })

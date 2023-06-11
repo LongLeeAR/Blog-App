@@ -5,15 +5,18 @@ import { BlogsRef } from "shared/constants";
 import { formatText } from "shared/utils/formatText";
 
 export const fetchBlogListService = async () => {
-  return callWithFirebaseDB(async (database) => {
-    const blogsRef = ref(database, BlogsRef);
-    const snapshot = await get(blogsRef);
-    const data = snapshot.val();
-    if (data) {
-      // return Object.values(data).sort((a, b) => b.time - a.time);
-      return data;
-    }
-  })
+  try {
+    return await callWithFirebaseDB(async (database) => {
+      const blogsRef = ref(database, BlogsRef);
+      const snapshot = await get(blogsRef);
+      const data = snapshot.val();
+      if (data) {
+        return data;
+      }
+    })
+  } catch (error) {
+    return null;
+  }
 }
 
 const formatImageBlocks = async (savedData, app) => {
@@ -36,32 +39,33 @@ const formatImageBlocks = async (savedData, app) => {
       }
     }, {}));
   } catch (error) {
-    return Promise.reject(error); 
+    throw Promise.reject(error); 
   }
 }
 
 export const saveBlogService =  async (blog, app) => {
-  const imageBlocksById = await formatImageBlocks(blog, app);
+  try {
+    const imageBlocksById = await formatImageBlocks(blog, app);
   
-  blog.blocks = blog.blocks.map(block => {
-    if (block?.data?.text) {
-      block.data.text = formatText(block?.data?.text);
-    }
-    
-    if (imageBlocksById[block.id]) {
-      return imageBlocksById[block.id];
-    }
-    return block;
-  })
+    blog.blocks = blog.blocks.map(block => {
+      if (block?.data?.text) {
+        block.data.text = formatText(block?.data?.text);
+      }
+      
+      if (imageBlocksById[block.id]) {
+        return imageBlocksById[block.id];
+      }
+      return block;
+    })
 
-  return callWithFirebaseDB(async (database) => {
-    try {
+    return await callWithFirebaseDB(async (database) => {
       await set(ref(database, BlogsRef + '/' + blog.id), blog);
       return blog;
-    } catch (error) {
-      return error;
-    }
-  })
+    })
+  } catch (error) {
+    console.log('save blog counter error: ', error);
+    return null;
+  }
 }
 
 export const fetchBlogDetailService = async (blogId) => {
