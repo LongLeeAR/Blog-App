@@ -63,6 +63,18 @@ p {
   margin-left: 8%;
 }
 
+@media screen and (max-width: 700px) {
+  .right-content {
+    display: none;
+  }
+  .left-content {
+    flex: 4;
+    text-align: left;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
 .social-items {
   display: flex;
   flex-direction: row;
