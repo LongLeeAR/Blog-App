@@ -1,36 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { BLOG_TYPE, BLOG_TYPE_NAME_MAP } from "shared/constants";
 import { useLogin } from "shared/hooks/useLogin";
 import { useActions } from "shared/redux/useActions";
-import styled from "styled-components";
 import { selectUser } from 'views/Login/Auth.selectors';
 import { authActions } from "views/Login/Auth.slice";
+import Sidebar from 'views/Sidebar';
 import './index.css';
 
-const StickyHeader = styled.div`
-  height: 50px;
-  width: 100%;
-  top: 0;
-  z-index: 1;
-  background: #fff;
-  position: sticky;
-  border-bottom: solid 1px #eee;
-  display: flex;
-  justify-content: center;
-`
-const MenuWrapper = styled.div`
-  background-color: #fff;
-  width: 100%;
-  display: block;
-  color: #555;
-  padding-left: 16%;
-`
 
 const TopNavBar = () => {
   const navigate = useNavigate();
   const login = useLogin();
+  const [isOpenSidebar, toggleSidebar] = useState(false);
   const {logout, setLoginInfo} = useActions({
     logout: authActions.logout,
     setLoginInfo: authActions.setLoginInfo
@@ -45,13 +28,22 @@ const TopNavBar = () => {
     }
   }, [])
 
+  const onToggleSidebar = () => {
+    toggleSidebar(e => !e);
+  }
+
   return (
-    <StickyHeader>
-      <MenuWrapper>
-        <ul className="menu">
+   <>
+     <Sidebar isOpen={isOpenSidebar} toggleSidebar={onToggleSidebar} />
+     <div className='header'>
+      <div className='left-header'>
+        <ul className="menu top-menu">
+          <li className="menuItem small-screen-only">
+            <i onClick={onToggleSidebar} className="fa fa-bars"></i>
+          </li>
           <li onClick={() => navigate('tap-but')} className="menuItem brand-item" >LongHaiLe.com</li>
           <li
-            className="menuItem dropdown-item"
+            className="top-only-item menuItem dropdown-item"
           >
             <Link className="link" to="/tap-but">
               <img
@@ -74,30 +66,30 @@ const TopNavBar = () => {
               }
             </ul>
           </li>
-          <li className="menuItem" >
+          <li className="menuItem top-only-item" >
             <Link className="link" to="/photos">
               <img draggable="false" className="emoji" alt="📷" src="https://s.w.org/images/core/emoji/14.0.0/svg/1f4f7.svg" />
               Photos
             </Link>
           </li>
-          <li className="menuItem">
+          <li className="menuItem top-only-item">
             <Link className="link" to="/gioi-thieu">
               <i className="fa fa-user user-icon"></i>
               Giới thiệu
             </Link>
           </li>
         </ul>
-      </MenuWrapper>
-      <section style={{alignSelf: 'center', marginRight: 16, cursor: 'pointer', minWidth: 170, display: 'flex', justifyContent: 'flex-end'}}>
+      </div>
+      <section className='right-header'>
         {
            Boolean(user) ?  <ul className="menu">
             <li className="menuItem dropdown-item">
-              <h4 >{user?.displayName}</h4>
-              <img src={user?.photoURL} width="24px" height="24px" style={{borderRadius: '50%', marginLeft: 8}} />
+              <h4 className='user-name'>{user?.displayName}</h4>
+              <img src={user?.photoURL} width="24px" height="24px" style={{borderRadius: '50%'}} />
               <ul
                 role="menu"
                 style={{width: 100}}
-                className="dropdown-menu"
+                className="dropdown-menu "
               >
                 <li onClick={logout} className="link">Logout</li>
               </ul>
@@ -106,7 +98,8 @@ const TopNavBar = () => {
            : <section style={{cursor: 'pointer', display: 'flex', justifyContent: 'flex-end'}} onClick={login}>Login</section>
         }
       </section>
-    </StickyHeader>
+    </div>
+   </>
   )
 }
 

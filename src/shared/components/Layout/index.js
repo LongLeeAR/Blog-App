@@ -59,6 +59,7 @@ const Layout = (props) => {
   
 
   return (
+  <div className='page-container'>
     <div className='content-container'>
       <section className='left-content'>
         <section className='content-title'>
@@ -143,9 +144,11 @@ const Layout = (props) => {
         </section>
         {rightContent && rightContent}
       </section>
-
-      
     </div>
+    <section className='footer'>
+        --------Long Hai Le--------
+    </section>
+  </div>
   )
 }
 
