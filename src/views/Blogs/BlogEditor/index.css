@@ -28,6 +28,14 @@
   text-indent: 16px;
 }
 
+#blog-editor h1.ce-header  {
+  text-align: center;
+}
+
+#blog-editor .ce-header  {
+  text-align: left;
+}
+
 .cdx-simple-image__caption {
   display: none;
 }
